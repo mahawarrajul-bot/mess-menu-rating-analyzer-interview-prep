@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mess Menu Rating Analyzer: viva prep</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1c1d20;--mut:#5d6068;--card:#fff;--bd:#e0e0dc;--ac:#1f5fd6;--acbg:#e8f0fd;--warn:#fff4d6;--warnbd:#e0b440;--code:#f0f0ec}
+:root[data-theme=dark]{--bg:#141517;--fg:#e8e8e6;--mut:#a0a3aa;--card:#1d1e21;--bd:#33353a;--ac:#6ea0ff;--acbg:#1d2a44;--warn:#3a321a;--warnbd:#a8892f;--code:#26272b}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141517;--fg:#e8e8e6;--mut:#a0a3aa;--card:#1d1e21;--bd:#33353a;--ac:#6ea0ff;--acbg:#1d2a44;--warn:#3a321a;--warnbd:#a8892f;--code:#26272b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+header.top{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--bd);z-index:5}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:8px}
+header.top b{font-size:15px}
+button,input{font:inherit;color:var(--fg)}
+button{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--ac)}button.on{background:var(--acbg);border-color:var(--ac)}
+h1{font-size:28px;margin:28px 0 4px}h2{font-size:22px;margin:40px 0 10px;border-bottom:1px solid var(--bd);padding-bottom:6px}h3{font-size:17px;margin:20px 0 6px}
+.sub{color:var(--mut)}
+nav.toc{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 16px;margin:16px 0}
+nav.toc a{display:inline-block;margin:2px 10px 2px 0;color:var(--ac);text-decoration:none;font-size:14px}
+.note{background:var(--warn);border:1px solid var(--warnbd);border-radius:10px;padding:10px 14px;margin:14px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 16px;margin:12px 0}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0}
+th,td{border:1px solid var(--bd);padding:6px 9px;text-align:left;vertical-align:top}th{background:var(--acbg)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.4}
+svg text{fill:var(--fg);font:12px system-ui}svg rect.b{fill:var(--card);stroke:var(--ac);stroke-width:1.5}svg line,svg path{stroke:var(--mut);fill:none;stroke-width:1.5}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tools input{flex:1;min-width:180px;padding:7px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card)}
+details.q{background:var(--card);border:1px solid var(--bd);border-radius:10px;margin:8px 0}
+details.q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary:before{content:"▸ ";color:var(--ac)}details.q[open] summary:before{content:"▾ "}
+details.q .a{padding:0 14px 12px}.fu{color:var(--mut);border-left:3px solid var(--ac);padding-left:10px;margin-top:8px}
+.star{color:#d89a00}.cat{font-size:12px;color:var(--mut);font-weight:400}
+.hide{display:none}
+@media(max-width:600px){h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><b>Mess Menu Rating Analyzer · viva prep</b><button id="theme" aria-label="Toggle theme">Theme</button></div></header>
+<div class="wrap">
+<h1>Mess Menu Rating Analyzer: viva prep</h1>
+<p class="sub">College-hostel mess feedback app. Every fact below comes from this project's repository (README, <code>specs/</code>, <code>docs/</code>, <code>config/stats.json</code>, <code>demo_report.json</code>, source layout). Numbers are quoted from those files; the test counts are the figures recorded in the README and <code>docs/progress.md</code>, not re-run for this page.</p>
+<div class="note"><b>Read this first (honesty).</b> (1) The results come from <b>simulated</b> data, not real students. (2) The code was written with an AI assistant (Claude Code), working from specs I approved; I must be able to explain every part myself. (3) The "&lt;20 second rating" goal is designed for but <b>not user-tested</b>. (4) I have not verified in this page whether a production deployment is live; the repo contains deploy configuration only.</div>
+
+<nav class="toc"><b>Contents:</b><br>
+<a href="#pitch">1 Pitch</a><a href="#arch">2 Architecture</a><a href="#modules">3 Modules</a><a href="#stack">4 Tech stack</a><a href="#process">5 Process</a><a href="#testing">6 Testing/CI</a><a href="#results">7 Results</a><a href="#limits">8 Limitations</a><a href="#demo">9 Demo script</a><a href="#gloss">10 Glossary</a><a href="#qa">11 Question bank</a></nav>
+
+<h2 id="pitch">1. Two-minute pitch</h2>
+<div class="card">
+<p><b>Problem.</b> A hostel mess manager gets complaints but no reliable evidence of which dishes students like, which are getting worse, or which weekday is weak. A raw star average is misleading: a dish with two 5★ ratings beats one with 200 ratings averaging 4.3.</p>
+<p><b>Users.</b> Students (rate a meal on their phone, installable PWA, reminder after lunch/dinner) and the mess manager (uploads the weekly menu, reads the dashboard and comments).</p>
+<p><b>What stands out.</b></p>
+<ul>
+<li>Statistics are written by hand in <b>pure-stdlib Python</b>: Bayesian average with interval, trend test with Benjamini–Hochberg correction, weekday ANOVA, rule-based Keep / Drop / Watch / Need-more-data with a reason string.</li>
+<li>A <b>seeded simulator</b> plants known patterns and a recovery check proves the analysis finds them.</li>
+<li><b>Pseudonymous ratings</b>: a rating row holds no student id, roll or email; reminders still skip students who already rated (HMAC token).</li>
+<li>Menus are <b>versioned and append-only</b>; each served meal is a frozen snapshot, so ratings always refer to what was served.</li>
+</ul>
+<p><b>Proof (simulated data, seed 42, 7,705 ratings, from <code>demo_report.json</code>).</b> All 6 recovery checks pass: Paneer Special (2×5★, raw rank 1) drops to Bayesian rank 6 with "need more data"; Dal Fry is flagged declining (−0.98 stars per 28 days); Wednesday found as the weak weekday (F = 28.0); Veg Biryani is "need more data" (80 ratings, 2 serving days); Lauki Sabzi (raw 2.05) is Drop with top tags oily/bland. Per <code>docs/progress.md</code>, recovery passes for 30 seeds; the weekday-adjusted trend finds the decline 60/60 seeds versus 45/60 without adjustment.</p>
+</div>
+
+<h2 id="arch">2. Architecture and request flow</h2>
+<svg viewBox="0 0 760 250" width="100%" role="img" aria-label="Architecture diagram">
+<rect class="b" x="10" y="20" width="130" height="60" rx="8"/><text x="75" y="48" text-anchor="middle">Phone (PWA)</text><text x="75" y="64" text-anchor="middle">student / admin</text>
+<rect class="b" x="210" y="20" width="190" height="60" rx="8"/><text x="305" y="48" text-anchor="middle">Next.js on Vercel</text><text x="305" y="64" text-anchor="middle">pages + /api routes</text>
+<rect class="b" x="470" y="20" width="140" height="60" rx="8"/><text x="540" y="48" text-anchor="middle">Postgres</text><text x="540" y="64" text-anchor="middle">SQL via pg</text>
+<rect class="b" x="210" y="150" width="190" height="60" rx="8"/><text x="305" y="178" text-anchor="middle">Python function</text><text x="305" y="194" text-anchor="middle">stats/ (no DB access)</text>
+<rect class="b" x="470" y="150" width="140" height="60" rx="8"/><text x="540" y="172" text-anchor="middle">Resend (email)</text><text x="540" y="190" text-anchor="middle">web-push (VAPID)</text>
+<rect class="b" x="650" y="85" width="100" height="60" rx="8"/><text x="700" y="112" text-anchor="middle">Cron (2/day)</text><text x="700" y="128" text-anchor="middle">+ GH Actions</text>
+<path d="M140 50H210"/><path d="M400 50H470"/><path d="M305 80V150"/><path d="M400 180H470"/><path d="M650 115L400 70"/>
+</svg>
+<h3>Flow: a rating</h3>
+<ol>
+<li>Student signs in via emailed single-use link → signed cookie.</li>
+<li><code>/api/me/meals</code> lists open meals; form shows that meal's frozen dish snapshot.</li>
+<li><code>POST /api/meals/[id]/rate</code> validates input (zod), computes <code>rater_token = HMAC(PEPPER, student_id : meal_service_id)</code>, inserts submission + dish ratings in one transaction; a UNIQUE constraint blocks a second rating.</li>
+</ol>
+<h3>Flow: dashboard</h3>
+<ol>
+<li><code>/api/stats</code> serves a cached snapshot (15 min). If stale, Next.js queries ratings <i>grouped</i> by (dish, date, stars, tags) with counts, POSTs them to the Python function, stores the report; on failure serves the old snapshot marked stale.</li>
+<li>Python never reads the DB (design change recorded in <code>specs/design.md</code>, T26).</li>
+</ol>
+
+<h2 id="modules">3. How each module works</h2>
+<div class="tw"><table>
+<tr><th>Module</th><th>Where</th><th>What it does</th></tr>
+<tr><td>Bayesian average</td><td><code>stats/bayes.py</code></td><td>score = (C·m + Σr)/(C+n), C = 10; sd = σ/√(C+n); 95% interval.</td></tr>
+<tr><td>Special functions</td><td><code>stats/special.py</code></td><td>Incomplete beta, t and F p-values, z value, hand-written; checked against scipy reference values in tests.</td></tr>
+<tr><td>Trend</td><td><code>stats/trend.py</code></td><td>Daily means → OLS slope → t-test; eligibility gates; Benjamini–Hochberg; effect gate ≥ 0.3 stars/28 days; weekday adjustment first.</td></tr>
+<tr><td>Weekday</td><td><code>stats/weekday.py</code></td><td>Residual = rating − dish score; one-way ANOVA; η²; weakest day only if its interval is below 0.</td></tr>
+<tr><td>Recommend</td><td><code>stats/recommend.py</code></td><td>Order: Need-more-data → Drop (upper ≤ 3.0) → Keep (lower ≥ 3.5, not declining) → Watch.</td></tr>
+<tr><td>Tags</td><td><code>stats/tags.py</code></td><td>Tag shares with small-cell suppression (&lt; 5 hidden).</td></tr>
+<tr><td>Pipeline</td><td><code>stats/pipeline.py</code></td><td><code>analyze(rows)</code> → JSON report; rejects unexpected/personal fields.</td></tr>
+<tr><td>Simulator</td><td><code>simulator/</code></td><td>Seeded 4-week data with planted patterns; <code>verify.py</code> checks recovery.</td></tr>
+<tr><td>IST time</td><td><code>src/lib/ist.ts</code></td><td>IST date/weekday, meal windows, midnight rollover (no DST in India).</td></tr>
+<tr><td>Pseudonymisation</td><td><code>src/lib/pseudo.ts</code></td><td>Roll hash and per-meal rater token via HMAC with PEPPER.</td></tr>
+<tr><td>Menus</td><td><code>src/lib/menu/</code></td><td>Parse CSV/XLSX, diff preview, publish new version, resolve weekly vs special, freeze service snapshot.</td></tr>
+<tr><td>Rating</td><td><code>src/lib/rating.ts</code></td><td>Atomic one-per-meal submit, skip, tags, window checks.</td></tr>
+<tr><td>Auth</td><td><code>student-auth.ts</code>, <code>admin-auth.ts</code></td><td>Magic link (single use, POST to defeat link scanners); scrypt admin password, 5 failures/15 min/IP throttle.</td></tr>
+<tr><td>Reminders</td><td><code>src/lib/reminders.ts</code></td><td>Anti-join on tokens; push first, email fallback; claim-before-send in <code>reminder_log</code>.</td></tr>
+<tr><td>Demo</td><td><code>src/lib/demo.ts</code></td><td>Loads simulator data flagged <code>is_demo</code>; reset deletes only demo rows.</td></tr>
+</table></div>
+
+<h2 id="stack">4. Tech-stack decisions and why</h2>
+<div class="tw"><table>
+<tr><th>Choice</th><th>Why</th></tr>
+<tr><td>Next.js (App Router) + TypeScript + Tailwind</td><td>One codebase for UI and API; free Vercel hosting; types catch errors.</td></tr>
+<tr><td>Postgres + plain SQL migrations</td><td>Real constraints (UNIQUE, CHECK, append-only triggers) enforce rules in the database; simple runner is easy to explain.</td></tr>
+<tr><td>Pure-stdlib Python for statistics</td><td>Spec A11: this machine's app-control policy blocks numpy.random/scipy.stats DLLs; dependency-free is small and explainable. scipy only in optional test cross-checks.</td></tr>
+<tr><td>Python separate from DB</td><td>Pure functions on lists are testable with no DB; no DB credentials in the Python runtime; no personal fields reach it.</td></tr>
+<tr><td>Bayesian shrinkage, not a minimum-vote cutoff</td><td>Smooth, gives an interval. Trade-off: normal approximation for 1–5 data.</td></tr>
+<tr><td>PWA + web push + email fallback</td><td>No app-store install; email covers iPhone/no-push cases. Resend free tier ≈ 100 emails/day (capped at 80 per run in config).</td></tr>
+<tr><td>Two daily Vercel crons + GitHub Actions backup</td><td>Hobby plan allows 2 once-a-day crons firing anywhere in the hour; jobs check "has the meal ended" and are idempotent.</td></tr>
+<tr><td>Thresholds in <code>config/stats.json</code></td><td>No magic numbers; sensitivity can be shown by editing one file.</td></tr>
+</table></div>
+
+<h2 id="process">5. Development process</h2>
+<ul>
+<li><b>Spec-first:</b> <code>specs/requirements.md</code> (assumptions A1–A14, 8 epics), <code>design.md</code> (architecture, schema, formulas with worked examples), <code>tasks.md</code> (T1–T37 in order).</li>
+<li><b>Tests first for statistics</b>, using hand-checkable values from the design worked examples.</li>
+<li><b>Per task:</b> run tests, tick the box, update <code>docs/progress.md</code>, one git commit (43 commits, 24–26 Oct 2026 per <code>git log</code>).</li>
+<li><b>Planned stop at T10/T11</b> to review the statistics and simulator before building the web app.</li>
+<li><b>Spec changes recorded, not silent:</b> T26 (Python does not read DB), T35 (weekday-adjusted trend, approved spec change).</li>
+<li><b>AI assistance:</b> built with Claude Code under <code>CLAUDE.md</code> rules (safe commands, local DB only, never deploy, no secrets). I reviewed and own the design decisions; be ready to explain any file.</li>
+</ul>
+
+<h2 id="testing">6. Testing and CI</h2>
+<div class="tw"><table>
+<tr><th>Command</th><th>Covers</th></tr>
+<tr><td><code>python -m pytest stats simulator api -q</code></td><td>Statistics, simulator, Python functions: 196 tests (README).</td></tr>
+<tr><td><code>npm test</code> (Vitest)</td><td>TypeScript logic against a real test Postgres: 195 tests (README).</td></tr>
+<tr><td><code>python -m simulator</code></td><td>Ranked table + PASS/FAIL per hidden pattern.</td></tr>
+<tr><td><code>npm run smoke</code></td><td>End-to-end over HTTP: admin login → menu → register → emailed link (single use) → rate → duplicate rejected → stats → dashboard (12 checks).</td></tr>
+<tr><td><code>npm run lint</code>, <code>npm run build</code></td><td>Static checks.</td></tr>
+</table></div>
+<p>Notable tests: 8 concurrent rating requests → exactly one succeeds; privacy test scans public stats API output for emails, hashes, ids and comments; 18 reminder tests with fake senders (found and fixed a duplicate push+email race); special-function p-values vs scipy references to 1e-9.</p>
+<div class="note"><b>CI caveat:</b> the repo's only GitHub Actions workflow is <code>remind-backup.yml</code> (a reminder scheduler). There is <b>no automated test workflow</b>; tests are run locally. Say so if asked.</div>
+
+<h2 id="results">7. Results and evaluation</h2>
+<p>Simulated run, seed 42, 7,705 ratings, global mean 3.58, sd 0.93 (<code>demo_report.json</code>):</p>
+<div class="tw"><table>
+<tr><th>Dish</th><th>n</th><th>Raw</th><th>Bayes</th><th>95% interval</th><th>Result</th></tr>
+<tr><td>Aloo Paratha</td><td>256</td><td>4.27</td><td>4.25</td><td>4.14–4.36</td><td>Keep</td></tr>
+<tr><td>Rajma Masala</td><td>291</td><td>4.23</td><td>4.21</td><td>4.10–4.31</td><td>Keep</td></tr>
+<tr><td>Paneer Special</td><td>2</td><td>5.00</td><td>3.81</td><td>3.29–4.34</td><td>Need more data</td></tr>
+<tr><td>Veg Biryani</td><td>80</td><td>4.01</td><td>3.96</td><td>3.77–4.16</td><td>Need more data (2 serving days)</td></tr>
+<tr><td>Dal Fry</td><td>422</td><td>3.58</td><td>3.58</td><td>3.50–3.67</td><td>Watch, declining</td></tr>
+<tr><td>Lauki Sabzi</td><td>265</td><td>2.05</td><td>2.10</td><td>1.99–2.21</td><td>Drop (tags oily, bland)</td></tr>
+</table></div>
+<p>Weekday: Wednesday found weakest (F = 28.0, p = 3.1e-33). Recovery passes on 30 seeds; adjusted trend finds the decline on 60/60 seeds versus 45/60 unadjusted.</p>
+<h3>What the results do NOT show</h3>
+<ul>
+<li><b>Not real-world accuracy.</b> The simulator and the analysis share my assumptions, so recovery proves the code finds what I planted, not that real students behave this way.</li>
+<li><b>Weekday effect size is understated:</b> estimated ≈ −0.27 vs planted −0.45 (dishes served on only one weekday absorb the effect). η² is only about 2%: significant but small.</li>
+<li>No real students, no usability test, no load test, no evaluation of whether managers act on the output.</li>
+<li>The p-value of 3.1e-33 reflects thousands of simulated ratings, not practical importance.</li>
+</ul>
+
+<h2 id="limits">8. Limitations, trade-offs, next steps</h2>
+<ul>
+<li><b>Pseudonymous, not anonymous:</b> the server holds PEPPER and can recompute tokens to know <i>whether</i> a student rated (needed for reminders). Changing PEPPER orphans students.</li>
+<li>Normal approximation for discrete 1–5 ratings; same σ for all dishes; C = 10 is a choice. Alternative: Dirichlet–multinomial.</li>
+<li>Weekday offsets are partial (conservative) so a confounded dish keeps some noise.</li>
+<li>Free-tier limits: ~100 emails/day, 2 crons; iPhone push only after Add to Home Screen.</li>
+<li>Demo data are simulated; demo and live scopes are kept separate.</li>
+<li>Dark mode follows the OS only (no manual toggle in the app).</li>
+<li><b>Next steps:</b> pilot with a real hostel block; usability-time the 20-second claim; add a CI test workflow; compare Bayesian model with Dirichlet–multinomial; real-data sensitivity analysis for C.</li>
+</ul>
+
+<h2 id="demo">9. Live demo script (about 5 min)</h2>
+<ol>
+<li><code>python -m simulator</code>: show ranked table and 6 PASS lines. Point at Paneer Special: raw rank 1 → Bayesian rank 6.</li>
+<li>Run the app: <code>npm run db:up</code>, <code>npm run dev</code>; open <code>/dashboard?scope=demo</code> (after <code>npm run demo:load</code>). Show cards, interval bars, Keep/Drop/Watch badges and reasons.</li>
+<li>Open Dal Fry's dish page: trend line + histogram. Open Lauki Sabzi: tags oily/bland.</li>
+<li>Show the weekday chart and ANOVA caption (Wednesday).</li>
+<li>Student flow: <code>/register</code> → sign-in link (printed in server console without a Resend key) → rate a meal → try again: "already rated".</li>
+<li>Admin <code>/admin</code>: upload menu CSV → diff preview → confirm → version history.</li>
+<li>Show <code>config/stats.json</code>: change <code>prior_strength</code> and rerun to show sensitivity.</li>
+<li>Backup plan: <code>npm test</code> / pytest output, or screenshots, if Docker/DB fails.</li>
+</ol>
+
+<h2 id="gloss">10. Glossary</h2>
+<div class="tw"><table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Bayesian average</td><td>Mean pulled toward the global mean by C imaginary ratings; stabilises dishes with few votes.</td></tr>
+<tr><td>Credible/95% interval</td><td>Range likely to contain the dish's true mean under the model.</td></tr>
+<tr><td>OLS</td><td>Ordinary least squares line fit; slope = stars per day.</td></tr>
+<tr><td>p-value</td><td>Chance of a result at least this extreme if there were no real effect; not the probability the effect is real.</td></tr>
+<tr><td>Benjamini–Hochberg</td><td>Controls the false-discovery rate when testing many dishes.</td></tr>
+<tr><td>ANOVA / F / η²</td><td>Tests whether group means differ; F = between/within variation; η² = share of variation explained.</td></tr>
+<tr><td>Residual</td><td>Rating minus the dish's own score (removes dish effect).</td></tr>
+<tr><td>Effect size gate</td><td>Minimum practical change (0.3 stars/28 days) in addition to p &lt; 0.05.</td></tr>
+<tr><td>HMAC / PEPPER</td><td>Keyed hash; PEPPER is the server secret key.</td></tr>
+<tr><td>Pseudonymisation</td><td>Replacing identity with a token; reversible by whoever holds the key.</td></tr>
+<tr><td>Append-only</td><td>Rows are never updated/deleted (enforced by DB triggers).</td></tr>
+<tr><td>PWA / VAPID</td><td>Installable web app / key pair identifying the push sender.</td></tr>
+<tr><td>Small-cell suppression</td><td>Hiding counts below 5 so few raters cannot be singled out.</td></tr>
+<tr><td>IST</td><td>Asia/Kolkata, UTC+05:30, no DST.</td></tr>
+</table></div>
+
+<h2 id="qa">11. Question bank</h2>
+<div class="tools">
+<input id="s" type="search" placeholder="Search questions…" aria-label="Search">
+<button id="star">★ only</button><button id="open">Expand all</button><button id="close">Collapse all</button>
+<span class="sub" id="count"></span>
+</div>
+<div id="qs"></div>
+</div>
+<script>
+const Q=[
+[1,"Statistics","Why a Bayesian average instead of the raw mean?","A raw mean lets 2×5★ beat 200 ratings averaging 4.3. Shrinkage starts each dish with C=10 imaginary ratings at the global mean, so score=(C·m+Σr)/(C+n). In the simulated run Paneer Special goes from raw rank 1 (5.00) to Bayesian rank 6 (3.81, interval 3.29–4.34).","Why not a minimum-ratings cutoff? Abrupt and gives no interval; shrinkage is smooth. Cost: the normal approximation."],
+[1,"Statistics","How did you choose C = 10?","It is a judgement call in <code>config/stats.json</code>, not a law. I have not tuned it on real data. I can change it live and show how scores move.","How would you choose it properly? Pilot data plus sensitivity analysis or empirical Bayes."],
+[1,"Statistics","Explain the trend test.","Group a dish's ratings by serving day, take daily means, fit OLS vs days, t-test the slope with k−2 df. Report only if ≥30 ratings, ≥6 serving days, ≥14-day span, BH-adjusted p<0.05 and |change| ≥0.3 stars per 28 days.","Why daily means? Ratings of one meal share a cooking batch, so they are not independent; using each rating would fake significance."],
+[1,"Statistics","What is a p-value?","The probability of seeing a result at least this extreme if the true slope/effect were zero. It is not the probability the effect is real.","Why also an effect-size threshold? Large samples make tiny effects significant."],
+[1,"Statistics","Why Benjamini–Hochberg?","We test many dishes at once, so some would look significant by chance. BH controls the false-discovery rate across eligible dishes.","Why not Bonferroni? Stricter, loses power; FDR is the usual choice for exploratory screens."],
+[1,"Statistics","Why is the weekday analysis done on residuals?","Wednesday may simply serve weaker dishes. Residual = rating − that dish's score removes the dish effect before the one-way ANOVA. Weakest day is named only if the omnibus p<0.05 and its interval is below 0.","What did you find? Wednesday, F=28.0, but η²≈2%: significant yet small."],
+[1,"Statistics","What is the weekday-adjusted trend (T35) and why?","A dish served on a weak weekday has a bumpy daily series and a real decline can be missed. If the weekday test is significant, each weekday's offset is subtracted before the trend regression. On 60 seeds Dal Fry's decline was found 45× without and 60× with it.","Is that over-correction? Estimated offset −0.27 vs planted −0.45, so correction is partial and conservative. It was a spec change approved by me and recorded in the design."],
+[1,"Statistics","How are Keep / Drop / Watch decided?","First match: Need-more-data (<20 ratings or <3 serving days); Drop if upper bound ≤3.0; Keep if lower bound ≥3.5 and not declining; else Watch. Uses interval bounds so we act only when the data are convincing.","Where do thresholds live? <code>config/stats.json</code>, none hard-coded."],
+[0,"Statistics","Why no numpy/scipy?","This machine's app-control policy blocks numpy.random and scipy.stats. Pure stdlib is also small on Vercel and explainable. I wrote the incomplete beta function and test it against scipy reference values to 1e-9.","Is writing your own math risky? Yes, hence tests with hand-checked worked examples and scipy cross-checks."],
+[0,"Statistics","Is the normal model appropriate for 1–5 ratings?","It is a simplification: closed form and accurate with n in the hundreds. Alternative is a Dirichlet–multinomial model. Same σ for all dishes is also assumed.","Would you change it? Yes, as a next step, and compare on real data."],
+[1,"Evaluation","How do you know the statistics are correct?","Tests written first with hand-computed values (design §5 worked examples), scipy cross-checks for p-values, and a simulator with planted ground truth: 6/6 recovery checks pass, and the recovery test passes for 30 seeds.","What does that not prove? That real students behave like my simulator; shared assumptions mean it is a code check, not a validation on reality."],
+[1,"Evaluation","You only used simulated data. Is that a weakness?","Yes, and I say so. No real student ratings exist in this project. The simulator proves the pipeline recovers known patterns; a pilot is the next step.","How would you validate on real data? Compare recommendations with manager judgement or survey results over several weeks."],
+[1,"Privacy","Is it really anonymous?","No: pseudonymous. A rating row has no student id/roll/email; it is linked to <code>HMAC(PEPPER, student_id : meal_service)</code>. Someone with only database access cannot link ratings to people. The server, which holds PEPPER, can recompute a token to know <i>whether</i> a student rated, never what.","Why keep that ability? So reminders skip students who already rated."],
+[0,"Privacy","Where is email stored and who sees comments?","Email is stored (sign-in links, fallback reminders) but never joined to ratings in any query, API or page. Comments are admin-only. A test scans the public stats API for emails, hashes, ids and comments.","What if PEPPER leaks? Tokens could be linked to student ids by someone with DB access too; keep it in env secrets only."],
+[0,"Privacy","What is small-cell suppression?","Tag/weekday cells with fewer than 5 ratings (<code>privacy.min_cell</code>) are hidden so a few raters cannot be singled out.",""],
+[1,"System design","How do you guarantee one rating per student per meal?","UNIQUE(meal_service_id, rater_token) plus insert with ON CONFLICT DO NOTHING in one transaction with the dish ratings. A test fires 8 concurrent requests and exactly one succeeds.","Why in the database? App-level checks race; constraints don't."],
+[1,"System design","Why are menus versioned and append-only?","A rating must refer to what was actually served. Each date+meal gets a frozen snapshot on first use; triggers reject UPDATE/DELETE on menu and snapshot tables (demo rows excepted). A new menu must take effect today or later.","Special one-day menus? A special version for that date overrides the weekly menu for those meals only."],
+[0,"System design","Why is Python called with grouped data and no DB access?","Pure functions on plain lists are easy to test and explain. The app sends only (dish, date, stars, tags, count); the module rejects unexpected fields. It also keeps DB credentials out of the Python runtime. This replaced an earlier plan to use psycopg (design change in T26).","What about freshness? 15-minute snapshot cache; stale snapshot served if recompute fails."],
+[0,"System design","How do reminders work on Vercel's free plan?","Two daily crons (lunch 09:00 UTC, dinner 16:00 UTC) that may fire within the hour. The job checks the meal has ended, claims each (student, meal, channel) in reminder_log before sending, so retries and races are harmless. A GitHub Actions backup calls the same endpoints.","Push vs email? Push first; email fallback, capped at 80 per run for free-tier limits."],
+[0,"System design","How is time handled?","Stored as UTC timestamptz; business dates are IST (UTC+05:30, no DST) via <code>src/lib/ist.ts</code>. Tests cover midnight rollover and weekday near UTC rollover.","Why does it matter? A rating at 00:30 IST belongs to a different IST date than UTC."],
+[0,"Security","How is authentication done?","Students: emailed single-use link (POST on verify to defeat link scanners), signed httpOnly cookie, anti-enumeration. Admin: scrypt-hashed password from env, signed cookie, 5 failures/15 min/IP throttle, Origin check. Cron routes need a Bearer CRON_SECRET (constant-time compare, fail closed).","Any known gap? No third-party security audit was done."],
+[1,"Process","How was this built, and what was the AI's role?","Spec-driven: requirements, design with formulas, then 37 ordered tasks, each with tests, a progress note and one commit. The code was written with Claude Code following <code>CLAUDE.md</code> rules. I reviewed the specs and decisions and approved the spec changes.","What did you do yourself? Be ready to state honestly: the decisions, review and understanding; and be able to explain any file or formula on request."],
+[1,"Process","Why stop after T10?","To review and understand the statistics module and simulator (viva-critical) before building the web app around it; notes are in <code>docs/viva-notes.md</code>.",""],
+[0,"Testing","What do your tests cover, and what's missing?","196 Python and 195 TypeScript tests (README), plus a 12-check end-to-end smoke script. Missing: an automated CI test workflow (only a reminder scheduler workflow exists), browser UI automation, load tests, real-device push tests.","Did you re-run them for this document? No; counts are from the README/progress notes."],
+[0,"Testing","How did you test reminders without sending email?","Fake senders injected in 18 tests. This found and fixed a duplicate push+email race.",""],
+[1,"Limitations","What are the main limitations?","Simulated data only; pseudonymous not anonymous; normal approximation; weekday effect understated (−0.27 vs −0.45) for dishes served on one weekday; free-tier email/cron limits; iPhone push needs the installed app; the 20-second rating goal is designed for but not user-tested.","Which matters most? Lack of real-data validation."],
+[0,"Limitations","Is the app deployed?","The repo contains deployment config (<code>vercel.json</code>, README checklist) and deployment is done by the project owner, not by the AI assistant. This page does not claim a live URL: check before the viva and adjust this answer.","What's needed to deploy? Neon/Vercel Postgres, env vars, migrations, VAPID keys, Resend key."],
+[0,"Product","Who is the user and what decision does it support?","Mess manager: which dishes to keep, drop, or watch, and which weekday needs attention. Students: a rating in one screen with optional tags/comment.","What would a manager do with 'Watch'? Look at the trend and tags, then re-check after more ratings."],
+[0,"Product","Why tags and comments?","Stars say how much, tags say why (e.g. Lauki Sabzi: oily, bland). Comments are admin-only free text.","Can tags be gamed? Fixed list, per-dish, one submission per meal."],
+[0,"Future","What would you do next?","Pilot with a real hostel block, usability-time the rating flow, add a CI test workflow, compare against a Dirichlet–multinomial model, sensitivity analysis for C.",""]
+];
+const box=document.getElementById('qs');
+Q.forEach((q,i)=>{const d=document.createElement('details');d.className='q';d.dataset.star=q[0];
+d.innerHTML=`<summary>${q[0]?'<span class="star">★</span> ':''}${q[2]} <span class="cat">· ${q[1]}</span></summary><div class="a"><p>${q[3]}</p>${q[4]?`<div class="fu"><b>Follow-up:</b> ${q[4]}</div>`:''}</div>`;box.appendChild(d)});
+const qs=[...box.children],s=document.getElementById('s'),sb=document.getElementById('star'),cnt=document.getElementById('count');
+function f(){const t=s.value.toLowerCase(),o=sb.classList.contains('on');let n=0;qs.forEach(d=>{const ok=(!o||d.dataset.star==='1')&&d.textContent.toLowerCase().includes(t);d.classList.toggle('hide',!ok);if(ok)n++});cnt.textContent=n+' of '+qs.length}
+s.oninput=f;sb.onclick=()=>{sb.classList.toggle('on');f()};
+document.getElementById('open').onclick=()=>qs.forEach(d=>d.open=true);
+document.getElementById('close').onclick=()=>qs.forEach(d=>d.open=false);f();
+const r=document.documentElement;let saved=null;try{saved=localStorage.getItem('theme')}catch(e){}
+if(saved)r.dataset.theme=saved;
+document.getElementById('theme').onclick=()=>{const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;const n=dark?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(e){}};
+</script>
+</body>
+</html>
